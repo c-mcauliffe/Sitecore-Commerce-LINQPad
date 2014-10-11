@@ -4,9 +4,9 @@
 // </copyright>
 // <summary>Defines the CommerceServerConfigReader class.</summary>
 //-----------------------------------------------------------------------
-namespace Sitecore.Commerce.LinqPad.Config
+namespace Sitecore.Commerce.LINQPad.Config
 {
-    using Sitecore.Commerce.LinqPad.Contexts;
+    using Sitecore.Commerce.LINQPad.Contexts;
     using Sitecore.Linqpad.Config;
     using System.Linq;
 

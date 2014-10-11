@@ -4,7 +4,7 @@
 // </copyright>
 // <summary>Defines the CommerceServerStaticContextManager class.</summary>
 //-----------------------------------------------------------------------
-namespace Sitecore.Commerce.LinqPad.Contexts
+namespace Sitecore.Commerce.LINQPad.Contexts
 {
     using CommerceServer.Core.Runtime.Caching;
     using global::CommerceServer.Core.Catalog;
