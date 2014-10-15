@@ -13,6 +13,8 @@ namespace Sitecore.Commerce.LINQPad.Contexts
     using global::CommerceServer.Core.Runtime.Profiles;
     using Sitecore.Commerce.Connect.CommerceServer;
     using System;
+    using System.Xml.Linq;
+    using System.Linq;
 
     /// <summary>
     /// Creates Commerce Server contexts without using Http Modules
@@ -21,6 +23,7 @@ namespace Sitecore.Commerce.LINQPad.Contexts
     {
         private static bool _catalogCacheEnabled = false;
         private static CatalogContext _catalogContext;
+        private static string _siteName;
 
         private ProfileContext _profileContext;
         private OrderContext _orderContext;
@@ -46,7 +49,18 @@ namespace Sitecore.Commerce.LINQPad.Contexts
         /// </summary>
         public string SiteName
         {
-            get { return "SolutionStorefrontSite"; }
+            get
+            {
+                if (!string.IsNullOrEmpty(_siteName))
+                {
+                    return _siteName;
+                }
+
+                var xDoc = XDocument.Load(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+                _siteName = xDoc.Descendants("CommerceServer").First().Descendants("application").First().Attribute("siteName").Value;
+
+                return _siteName;
+            }
         }
 
         /// <summary>
