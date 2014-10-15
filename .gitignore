@@ -160,3 +160,7 @@ $RECYCLE.BIN/
 .DS_Store
 SitecorePackage/package.zip
 *.nupkg
+*.bak
+*.nupkg
+*.zip
+SitecorePackage/package.zip
