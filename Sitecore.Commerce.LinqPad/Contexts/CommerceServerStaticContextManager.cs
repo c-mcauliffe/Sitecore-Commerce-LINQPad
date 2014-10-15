@@ -1,7 +1,4 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="CommerceServerStaticContextManager.cs" company="Sitecore Corporation">
-//     Copyright (c) Sitecore Corporation 1999-2014
-// </copyright>
 // <summary>Defines the CommerceServerStaticContextManager class.</summary>
 //-----------------------------------------------------------------------
 namespace Sitecore.Commerce.LINQPad.Contexts
@@ -15,11 +12,12 @@ namespace Sitecore.Commerce.LINQPad.Contexts
     using global::CommerceServer.Core.Runtime.Pipelines;
     using global::CommerceServer.Core.Runtime.Profiles;
     using Sitecore.Commerce.Connect.CommerceServer;
+    using System;
 
     /// <summary>
-    /// 
+    /// Creates Commerce Server contexts without using Http Modules
     /// </summary>
-    public class CommerceServerStaticContextManager : ICommerceServerContextManager
+    public class CommerceServerStaticContextManager : ICommerceServerContextManager, IDisposable
     {
         private static bool _catalogCacheEnabled = false;
         private static CatalogContext _catalogContext;
@@ -29,32 +27,31 @@ namespace Sitecore.Commerce.LINQPad.Contexts
         private PipelineCollection _pipelineCollection;
         private OrderManagementContext _orderManagementContext;
 
+        ~CommerceServerStaticContextManager()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether or not Commerce Server has been initialized
+        /// </summary>
         public bool IsCommerceServerInitialized
         {
             get { return true; }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating the name of the current Commerce Server site
+        /// </summary>
         public string SiteName
         {
             get { return "SolutionStorefrontSite"; }
         }
 
-        public static bool CatalogCacheEnabled
-        {
-            get
-            {
-                return _catalogCacheEnabled;
-            }
-            set
-            {
-                if (_catalogCacheEnabled != value)
-                {
-                    _catalogCacheEnabled = value;
-                    _catalogContext = null;
-                }
-            }
-        }
-
+        /// <summary>
+        /// Gets the Catalog Context
+        /// </summary>
         public CatalogContext CatalogContext
         {
             get
@@ -68,6 +65,9 @@ namespace Sitecore.Commerce.LINQPad.Contexts
             }
         }
 
+        /// <summary>
+        /// Gets the Profile Context
+        /// </summary>
         public ProfileContext ProfileContext
         {
             get
@@ -94,6 +94,9 @@ namespace Sitecore.Commerce.LINQPad.Contexts
             }
         }
 
+        /// <summary>
+        /// Gets the Order Context
+        /// </summary>
         public OrderContext OrderContext
         {
             get
@@ -107,6 +110,9 @@ namespace Sitecore.Commerce.LINQPad.Contexts
             }
         }
 
+        /// <summary>
+        /// Gets the Order Management Context
+        /// </summary>
         public OrderManagementContext OrderManagementContext
         {
             get
@@ -121,11 +127,17 @@ namespace Sitecore.Commerce.LINQPad.Contexts
             }
         }
 
+        /// <summary>
+        /// Gets the Caches
+        /// </summary>
         public CommerceCacheCollection Caches
         {
             get { return new CommerceServer.Core.Runtime.Caching.CommerceCacheCollection(); }
         }
 
+        /// <summary>
+        /// Gets the Collection of pipelines in the site
+        /// </summary>
         public PipelineCollection Pipelines
         {
             get
@@ -139,6 +151,36 @@ namespace Sitecore.Commerce.LINQPad.Contexts
             }
         }
 
+        /// <summary>
+        /// Dispose of the class
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Overridable method for disposing of objects in the class
+        /// </summary>
+        /// <param name="disposing">Whether or not the class is already disposing</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // free managed resources
+                if (this._profileContext != null)
+                {
+                    this._profileContext.Dispose();
+                    this._profileContext = null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates an instance of a Catalog Context
+        /// </summary>
+        /// <returns>Commerce Server Catalog Context</returns>
         private CatalogContext InitializeCatalogContext()
         {
             var catalogSiteAgent = new CatalogSiteAgent();
@@ -154,11 +196,19 @@ namespace Sitecore.Commerce.LINQPad.Contexts
             return catalogContext;
         }
 
+        /// <summary>
+        /// Creates an instance of a Order Context
+        /// </summary>
+        /// <returns>Commerce Server Order Context</returns>
         private OrderContext InitializeOrderContext()
         {
             return OrderContext.Create(this.SiteName);
         }
 
+        /// <summary>
+        /// Returns a list of all of the pipelines in the site
+        /// </summary>
+        /// <returns>A collection of pipelines</returns>
         private PipelineCollection InitializePipelines()
         {
             PipelineCollection coll = new PipelineCollection();
