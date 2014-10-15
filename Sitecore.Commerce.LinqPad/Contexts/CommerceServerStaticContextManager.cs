@@ -220,22 +220,24 @@ namespace Sitecore.Commerce.LINQPad.Contexts
         }
 
         /// <summary>
-        /// Returns a list of all of the pipelines in the site
+        /// Returns a list of all of the order pipelines in the site
         /// </summary>
         /// <returns>A collection of pipelines</returns>
         private PipelineCollection InitializePipelines()
         {
             PipelineCollection coll = new PipelineCollection();
 
-            PipelineBase basketPipeline = new OrderPipeline("basket", "pipelines/basket.pcf", false, "pipelines/basket.log", false);
-            PipelineBase checkoutPipeline = new OrderPipeline("checkout", "pipelines/checkout.pcf", false, "pipelines/checkout.log", false);
-            PipelineBase totalPipeline = new OrderPipeline("total", "pipelines/total.pcf", false, "pipelines/total.log", false);
-            PipelineBase creditcardPipeline = new OrderPipeline("creditcard", "pipelines/creditcard.pcf", false, "pipelines/creditcard.log", false);
+            var xDoc = XDocument.Load(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+            var orderPipelineConfigs = xDoc.Descendants("CommerceServer").First().Descendants("pipelines").First().Descendants("pipeline").Where(n => n.Attribute("type").Value == "OrderPipeline");
 
-            coll.Add("basket", basketPipeline);
-            coll.Add("checkout", checkoutPipeline);
-            coll.Add("total", totalPipeline);
-            coll.Add("creditcard", creditcardPipeline);
+            foreach (var orderPipelineConfig in orderPipelineConfigs)
+            {
+                var name = orderPipelineConfig.Attribute("name").Value;
+                var path = orderPipelineConfig.Attribute("path").Value.Replace(@"\", "/");
+
+                var orderPipeline = new OrderPipeline(name, path, false, "pipelines/" + name + ".log", false);
+                coll.Add(name, orderPipeline);
+            }
 
             return coll;
         }
