@@ -1,3 +1,5 @@
+﻿# https://powershellzip.codeplex.com/releases
+
 Param (
 	[switch]$Publish
 )
@@ -180,151 +182,52 @@ function Create-Process() {
 	return $p
 }
 
-function HandlePublishError {
-	param([string] $ErrorMessage)
-
-	# Run NuGet Setup
-	$encodedMessage = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($ErrorMessage))
-	$setupTask = Start-Process PowerShell.exe "-ExecutionPolicy Unrestricted -File .\NuGetSetup.ps1 -Url $url -Base64EncodedMessage $encodedMessage" -Wait -PassThru
-
-	#Write-Log ("NuGet Setup Task Exit Code: " + $setupTask.ExitCode)
-
-	if ($setupTask.ExitCode -eq 0) {
-		# Try to push package again
-		$publishTask = Create-Process .\NuGet.exe ("push " + $_.Name + " -Source " + $url)
-		$publishTask.Start() | Out-Null
-		$publishTask.WaitForExit()
-			
-		$output = ($publishTask.StandardOutput.ReadToEnd() -Split '[\r\n]') |? {$_}
-		$error = (($publishTask.StandardError.ReadToEnd() -Split '[\r\n]') |? {$_}) 
-		Write-Log $output
-		Write-Log $error Error
-
-		if ($publishTask.ExitCode -eq 0) {
-			$global:ExitCode = 0
-		}
-	}
-	elseif ($setupTask.ExitCode -eq 2) {
-		$global:ExitCode = 2
-	}
-	else {
-		$global:ExitCode = 0
-	}
-}
-
-function Publish {
-
-	Write-Log " "
-	Write-Log "Publishing package..." -ForegroundColor Green
-
-	# Get nuget config
-	[xml]$nugetConfig = Get-Content .\NuGet.Config
-	
-	$nugetConfig.configuration.packageSources.add | ForEach-Object {
-		$url = $_.value
-
-		Write-Log "Repository Url: $url"
-		Write-Log " "
-
-		Get-ChildItem *.nupkg | Where-Object { $_.Name.EndsWith(".symbols.nupkg") -eq $false } | ForEach-Object { 
-
-			# Try to push package
-			$task = Create-Process .\NuGet.exe ("push " + $_.Name + " -Source " + $url)
-			$task.Start() | Out-Null
-			$task.WaitForExit()
-			
-			$output = ($task.StandardOutput.ReadToEnd() -Split '[\r\n]') |? { $_ }
-			$error = ($task.StandardError.ReadToEnd() -Split '[\r\n]') |? { $_ }
-			Write-Log $output
-			Write-Log $error Error
-		   
-			if ($task.ExitCode -gt 0) {
-				HandlePublishError -ErrorMessage $error
-				#Write-Log ("HandlePublishError() Exit Code: " + $global:ExitCode)
-			}
-			else {
-				$global:ExitCode = 0
-			}                
-		}
-	}
-}
-
 Write-Log " "
-Write-Log "NuGet Packager 2.0.3" -ForegroundColor Yellow
+Write-Log "Starting Sitecore Package Creation" -ForegroundColor Yellow
 
-# Make sure the nuget executable is writable
-Set-ItemProperty NuGet.exe -Name IsReadOnly -Value $false
+# https://gallery.technet.microsoft.com/scriptcenter/PowerShell-and-7Zip-83020e74
 
-# Make sure the nupkg files are writeable and create backup
-if (Test-Path *.nupkg) {
-	Set-ItemProperty *.nupkg -Name IsReadOnly -Value $false
+[xml]$packageConfig = Get-Content .\Package.Config
+[xml]$versioningConfig = Get-Content ..\PackagingSettings.config
 
-	Write-Log " "
-	Write-Log "Creating backup..." -ForegroundColor Green
+$zipExe = $packageConfig.configuration.zip;
 
-	Get-ChildItem *.nupkg | ForEach-Object { 
-		Move-Item $_.Name ($_.Name + ".bak") -Force
-		Write-Log ("Renamed " + $_.Name + " to " + $_.Name + ".bak")
-	}
-}
-
-Write-Log " "
-Write-Log "Updating NuGet..." -ForegroundColor Green
-Write-Log (Invoke-Command {.\NuGet.exe update -Self} -ErrorAction Stop)
-
-Write-Log " "
-Write-Log "Creating package..." -ForegroundColor Green
-
-# update version number in nuspec file
-[xml]$packageConfig = Get-Content ..\PackagingSettings.config;
-[xml]$nuspec = Get-Content .\Package.nuspec;
+$insidePackage = "package.zip";
+$verionFile = ".\package\metadata\sc_version.txt";
 $version = "";
 
-if($packageConfig.configuration.versioning.source -eq "assembly"){
+if($versioningConfig.configuration.versioning.source -eq "assembly"){
 	$version = Get-ChildItem -Filter Sitecore.Commerce.LINQPad.dll -Recurse | Select-Object -First 1 -ExpandProperty VersionInfo | % {$_.ProductVersion}
 }
 else{
-	$version = $packageConfig.configuration.versioning.explicit;
+	$version = $versioningConfig.configuration.versioning.explicit;
 }
 
-$version = $version -replace '.[^.]*$','';
+$packageName = $packageConfig.configuration.name + " rev. " + $version + ".zip";
 
-$nuspec.package.metadata.version = $version + $packageConfig.configuration.versioning.postfix;
-$nuspec.Save(".\Package.nuspec");
+set-content $verionFile $version;
 
-# Create symbols package if any .pdb files are located in the lib folder
-If ((Get-ChildItem *.pdb -Path .\lib -Recurse).Count -gt 0) {
-	$packageTask = Create-Process .\NuGet.exe ("pack Package.nuspec -Symbol -Verbosity Detailed")
-	$packageTask.Start() | Out-Null
-	$packageTask.WaitForExit()
-			
-	$output = ($packageTask.StandardOutput.ReadToEnd() -Split '[\r\n]') |? {$_}
-	$error = (($packageTask.StandardError.ReadToEnd() -Split '[\r\n]') |? {$_}) 
-	Write-Log $output
-	Write-Log $error Error
+#### http://mats.gardstad.se/matscodemix/2009/02/05/calling-7-zip-from-powershell/  
+# Alias for 7-zip 
+if (-not (test-path "$($zipExe)")) {throw "$($zipExe) needed"} 
+set-alias sz "$($zipExe)"
 
-	$global:ExitCode = $packageTask.ExitCode
-}
-Else {
-	$packageTask = Create-Process .\NuGet.exe ("pack Package.nuspec -Verbosity Detailed")
-	$packageTask.Start() | Out-Null
-	$packageTask.WaitForExit()
-			
-	$output = ($packageTask.StandardOutput.ReadToEnd() -Split '[\r\n]') |? {$_}
-	$error = (($packageTask.StandardError.ReadToEnd() -Split '[\r\n]') |? {$_}) 
-	Write-Log $output
-	Write-Log $error Error
+$filePath = ".\package\*";
+ 
+# delete all existing zips
+rm *.zip;
 
-	$global:ExitCode = $packageTask.ExitCode
-}
+# create the inside package zip
+sz a -tzip ".\$($insidePackage)" "$filePath";
 
-# Check if package should be published
-if ($Publish -and $global:ExitCode -eq 0) {
-	Publish
-}
+# create the wrapper zip
+sz a -tzip ".\$($packageName)" ".\$($insidePackage)";
+ 
+Write-Log " "
+Write-Log "Finished..." -ForegroundColor Green
 
 Write-Log " "
 Write-Log "Exit Code: $global:ExitCode" -ForegroundColor Gray
 
-$host.SetShouldExit($global:ExitCode)
-Exit $global:ExitCode
+#$host.SetShouldExit($global:ExitCode)
+#Exit $global:ExitCode

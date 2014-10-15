@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sitecore.Commerce.LinqPad", "Sitecore.Commerce.LinqPad\Sitecore.Commerce.LinqPad.csproj", "{CB50D75C-F0A8-485F-90B6-1416EBB8CD15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Package", "Package\Package.csproj", "{0451BAEF-DF2E-4B98-8644-94EE9415E389}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuGetPackage", "Package\NuGetPackage.csproj", "{0451BAEF-DF2E-4B98-8644-94EE9415E389}"
 	ProjectSection(ProjectDependencies) = postProject
 		{CB50D75C-F0A8-485F-90B6-1416EBB8CD15} = {CB50D75C-F0A8-485F-90B6-1416EBB8CD15}
 	EndProjectSection
@@ -13,7 +13,18 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SupportingFiles", "SupportingFiles", "{EA6C369F-CB3F-4939-AAB1-C606B2236D4B}"
 	ProjectSection(SolutionItems) = preProject
 		license.md = license.md
+		PackagingSettings.config = PackagingSettings.config
 		readme.md = readme.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SitecorePackage", "SitecorePackage\SitecorePackage.csproj", "{26C61920-E429-4D29-A73C-D5B0EFA51E9C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CB50D75C-F0A8-485F-90B6-1416EBB8CD15} = {CB50D75C-F0A8-485F-90B6-1416EBB8CD15}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{48B20C0E-7423-4ED0-93D2-6EDD8E39EC09}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
 Global
@@ -30,6 +41,10 @@ Global
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26C61920-E429-4D29-A73C-D5B0EFA51E9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26C61920-E429-4D29-A73C-D5B0EFA51E9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26C61920-E429-4D29-A73C-D5B0EFA51E9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26C61920-E429-4D29-A73C-D5B0EFA51E9C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

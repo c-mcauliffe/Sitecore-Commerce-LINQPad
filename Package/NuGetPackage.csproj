@@ -61,9 +61,13 @@
     <None Include="tools\uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="content\" />
-    <Folder Include="lib\" />
     <Folder Include="src\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="content\sitecore\NuGet\Sitecore.Commerce.LinqPad\about.txt" />
+    <Content Include="lib\Sitecore.Commerce.LINQPad.dll" />
+    <Content Include="tools\Sitecore.NuGet.1.0.dll" />
+    <Content Include="wwwroot\bin\Sitecore.Commerce.LINQPad.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
