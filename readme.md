@@ -12,10 +12,10 @@ If you choose the NuGet package route then you can install it via Sitecore Rocks
 
 ##### Configure
 1. Setup a connection with the Sitecore LINQPad Driver ![Step 1](/doc/images/Step01.png)
-2. ![Step 2](/doc/images/Step02.png)
-3. ![Step 3](/doc/images/Step03.png)
-4. ![Step 4](/doc/images/Step04.png)
-5. ![Step 5](/doc/images/Step05.png)
+2. Right click on the connection and then click **Properties** ![Step 2](/doc/images/Step02.png)
+3. Click on the **Advanced** tab, then click on the **Browse** link to the right of the **App.config reader** label ![Step 3](/doc/images/Step03.png)
+4. Browse and select the **Sitecore.Commerce.LINQPad.dll** from your site then select the **CommerceServerConfigReader** class, then click **OK** ![Step 4](/doc/images/Step04.png)
+5. Make sure the **App.config** text box is populated with the class, then click **OK** ![Step 5](/doc/images/Step05.png)
 
 
 #### Useful Links
