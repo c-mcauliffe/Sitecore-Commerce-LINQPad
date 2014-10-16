@@ -11,7 +11,7 @@ Sitecore.Commerce.LINQPad.dll is distributed via a [NuGet package](https://www.n
 If you choose the NuGet package route then you can install it via Sitecore Rocks, see the links below if you are unsure how to do this. If you choose the Sitecore package route then you can just use the regular Sitecore Install Wizard on the site you want to target with LINQPad.
 
 ##### Configure
-1. ![Step 1](/c-mcauliffe/Sitecore-Commerce-LINQPad/doc/images/Step01.png)
+1. ![Step 1](/doc/images/Step01.png)
 2. ![Step 2](/c-mcauliffe/Sitecore-Commerce-LINQPad/doc/images/Step02.png)
 3. ![Step 3](/c-mcauliffe/Sitecore-Commerce-LINQPad/doc/images/Step03.png)
 4. ![Step 4](/c-mcauliffe/Sitecore-Commerce-LINQPad/doc/images/Step04.png)
