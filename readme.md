@@ -7,7 +7,7 @@ The [Sitecore LINQPad Driver from Adam Conn](http://www.sitecore.net/Learn/Blogs
 
 CRUD on Commerce Server Items
 
-| Without the driver  | With the driver  |
+| Without extension  | With extension  |
 |---|---|
 | ![Fail](/doc/images/CS_Fail.png)  | ![Success](/doc/images/CS_Success.png)  |
 
