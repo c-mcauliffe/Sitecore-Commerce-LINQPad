@@ -5,10 +5,13 @@ The [Sitecore LINQPad Driver from Adam Conn](http://www.sitecore.net/Learn/Blogs
 
 #### Functionality
 
-| If you query without the driver  | Querying with the driver  |
+CRUD on Commerce Server Items
+
+| Without the driver  | With the driver  |
 |---|---|
 | ![Fail](/doc/images/CS_Fail.png)  | ![Success](/doc/images/CS_Success.png)  |
 
+On a regular Sitecore Commerce Server installation all of the Commerce Server sub system contexts are created by HTTP modules. When you run queries from LINQPad the HTTP modules are never run so all of the Commerce Server contexts remain null and nothing works. The **CommerceServerConfigReader** class fixes this by updating the Sitecore configuration with a custom implementation of **ICommerceServerContextManager** which creates the Commerce Server sub system contexts statically so that everything will work when calls are made out side of the web.
 
 #### Setup
 ##### Get
