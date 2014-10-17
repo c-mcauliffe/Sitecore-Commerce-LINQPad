@@ -79,10 +79,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>XCOPY /S /R /Y "$(TargetPath)" "$(SolutionDir)Package\lib\"
-XCOPY /S /R /Y "$(TargetPath)" "$(SolutionDir)Package\wwwroot\bin\"
-XCOPY /S /R /Y "$(TargetPath)" "$(SolutionDir)SitecorePackage\package\files\bin\"
-XCOPY /S /R /Y "$(TargetPath)" "$(SolutionDir)SitecorePackage\package\properties\files\bin\"</PostBuildEvent>
+    <PostBuildEvent>XCOPY /R /Y "$(TargetPath)" "$(SolutionDir)NuGetPackage\lib\"
+XCOPY /R /Y "$(TargetPath)" "$(SolutionDir)NuGetPackage\wwwroot\bin\"
+XCOPY /R /Y "$(TargetPath)" "$(SolutionDir)SitecorePackage\package\files\bin\"
+XCOPY /R /Y "$(TargetPath)" "$(SolutionDir)SitecorePackage\package\properties\files\bin\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
