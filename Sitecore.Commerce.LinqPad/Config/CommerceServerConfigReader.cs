@@ -4,8 +4,10 @@
 namespace Sitecore.Commerce.LINQPad.Config
 {
     using Sitecore.Commerce.LINQPad.Contexts;
-    using Sitecore.Linqpad.Config;
+    using Sitecore.Linqpad.AppConfigReaders;
+    using Sitecore.Linqpad.Models;
     using System.Linq;
+    using System.Xml.Linq;
 
     /// <summary>
     /// Extends the defult Sitecore LINQPad Driver config reader and updates some Commerce Specific settings
@@ -17,12 +19,12 @@ namespace Sitecore.Commerce.LINQPad.Config
         /// </summary>
         /// <param name="config">The Sitecore config xml</param>
         /// <param name="driverConfig">The current driver configurations</param>
-        protected override void Transform(System.Xml.Linq.XDocument config, Sitecore.Linqpad.Driver.ISitecoreDriverSettings driverConfig)
+        protected override void Transform(XDocument document, SitecoreDriverSettings driverSettings)
         {
-            base.Transform(config, driverConfig);
+            base.Transform(document, driverSettings);
 
             // update the Commerce Server context config to use and instance that can create contexts without using Http Modules
-            var contextConfig = config.Descendants("commerceServer").First()
+            var contextConfig = document.Descendants("commerceServer").First()
                 .Descendants("types").First()
                 .Descendants("type")
                 .Where(t => t.Attribute("name").Value == "ICommerceServerContextManager")

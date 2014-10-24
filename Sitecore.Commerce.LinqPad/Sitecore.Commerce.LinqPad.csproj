@@ -57,9 +57,9 @@
     <Reference Include="Sitecore.Commerce.Connect.CommerceServer">
       <HintPath>..\Lib\Sitecore.Commerce.Connect.CommerceServer.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Linqpad, Version=1.6.0.0, Culture=neutral, PublicKeyToken=1ff490f7181746b3, processorArchitecture=MSIL">
+    <Reference Include="Sitecore.Linqpad, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1ff490f7181746b3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Sitecore.Linqpad.1.6.0.1\lib\Sitecore.Linqpad.dll</HintPath>
+      <HintPath>..\packages\Sitecore.Linqpad.1.8.0.0\lib\Sitecore.Linqpad.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
